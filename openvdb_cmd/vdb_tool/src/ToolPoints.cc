@@ -5,6 +5,14 @@
 /// @brief Point cloud <-> VDB conversion, particle rasterization and scattering. Split out of Tool.h; see Tool.h for the class.
 
 #include "Tool.h"
+#include <openvdb/points/AttributeArray.h>
+#include <openvdb/points/PointAttribute.h>
+#include <openvdb/points/PointConversion.h>
+#include <openvdb/points/PointCount.h>
+#include <openvdb/points/PointDataGrid.h>
+#include <openvdb/tools/ParticlesToLevelSet.h>
+#include <openvdb/tools/PointIndexGrid.h>
+#include <openvdb/tools/PointScatter.h>
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

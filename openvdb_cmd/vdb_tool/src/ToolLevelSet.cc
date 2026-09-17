@@ -5,6 +5,18 @@
 /// @brief Level-set operations: filtering, CSG, composite, primitives, sdf2udf, enright. Split out of Tool.h; see Tool.h for the class.
 
 #include "Tool.h"
+#include <openvdb/tools/Composite.h>
+#include <openvdb/tools/FastSweeping.h>
+#include <openvdb/tools/LevelSetAdvect.h>
+#include <openvdb/tools/LevelSetFilter.h>
+#include <openvdb/tools/LevelSetPlatonic.h>
+#include <openvdb/tools/LevelSetRebuild.h>
+#include <openvdb/tools/LevelSetSphere.h>
+#include <openvdb/tools/LevelSetUtil.h>
+#include <openvdb/tools/Morphology.h>
+#include <openvdb/tools/Prune.h>
+#include <openvdb/tools/SignedFloodFill.h>
+#include <openvdb/tools/ValueTransformer.h>
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

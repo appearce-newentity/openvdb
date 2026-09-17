@@ -5,6 +5,11 @@
 /// @brief Diagnostics, statistics, histogram and the -print output. Split out of Tool.h; see Tool.h for the class.
 
 #include "Tool.h"
+#include <openvdb/tools/Count.h>// tools::minMax
+#include <openvdb/tools/Diagnostics.h>
+#include <openvdb/tools/LevelSetMeasure.h>
+#include <openvdb/tools/Statistics.h>
+#include <openvdb/util/Formats.h>
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

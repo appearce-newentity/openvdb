@@ -6,6 +6,18 @@
 ///        NanoVDB read/write lives in ToolNanoVDB.cc.
 
 #include "Tool.h"
+#include <openvdb/io/Archive.h>
+#include <openvdb/io/Compression.h>
+#include <openvdb/io/File.h>
+#include <openvdb/io/Stream.h>
+#ifdef VDB_TOOL_USE_PDAL
+#include <pdal/pdal.hpp>
+#endif
+#if defined(_WIN32)
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

@@ -5,6 +5,20 @@
 /// @brief Generic grid operations: transform, resample, multires, segment, clip, compute, forValues, ax. Split out of Tool.h; see Tool.h for the class.
 
 #include "Tool.h"
+#include "Calculator.h"
+#include <openvdb/points/PointDataGrid.h>
+#include <openvdb/tools/ChangeBackground.h>
+#include <openvdb/tools/Clip.h>
+#include <openvdb/tools/GridOperators.h>
+#include <openvdb/tools/GridTransformer.h>
+#include <openvdb/tools/Interpolation.h>
+#include <openvdb/tools/LevelSetUtil.h>
+#include <openvdb/tools/MultiResGrid.h>
+#include <openvdb/tools/ValueTransformer.h>
+#include <tbb/enumerable_thread_specific.h>
+#ifdef VDB_TOOL_USE_AX
+#include <openvdb_ax/ax.h>// openvdb::ax::run (the -ax action)
+#endif
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE
