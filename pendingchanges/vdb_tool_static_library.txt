@@ -1,0 +1,7 @@
+vdb_tool:
+
+  Improvements:
+  - vdb_tool_common is now a compiled static library instead of an INTERFACE target. The Geometry and Parser implementations move into src/Geometry.cc and src/Parser.cc, and the tinygltf implementation (TINYGLTF_IMPLEMENTATION) is compiled exactly once, in Geometry.cc. Dependency configuration is PUBLIC so the library and the executables agree on every VDB_TOOL_USE_* definition.
+
+  Fixes:
+  - Removed two target_include_directories() calls that passed a target name as a directory (they produced a nonexistent -I path on every compile line), replaced -lpthread in the compile options with Threads::Threads, and made the include directory path absolute.
