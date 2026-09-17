@@ -25,7 +25,19 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${OPENVDB_CMAKE_PATH})
 
 # Compiled library holding the vdb_tool implementation and its dependency configuration
-add_library(vdb_tool_common STATIC src/Geometry.cc src/Parser.cc)
+add_library(vdb_tool_common STATIC
+  src/Geometry.cc
+  src/Parser.cc
+  src/ToolCore.cc
+  src/ToolInit.cc
+  src/ToolIO.cc
+  src/ToolNanoVDB.cc
+  src/ToolStats.cc
+  src/ToolPoints.cc
+  src/ToolGrid.cc
+  src/ToolLevelSet.cc
+  src/ToolMesh.cc
+  src/ToolRender.cc)
 find_package(Threads REQUIRED)
 target_link_libraries(vdb_tool_common PUBLIC Threads::Threads)
 

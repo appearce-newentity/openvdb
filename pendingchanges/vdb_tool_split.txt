@@ -1,0 +1,4 @@
+vdb_tool:
+
+  Improvements:
+  - Split the Tool implementation out of Tool.h (4,803 lines) into ten subsystem sources (ToolCore, ToolInit, ToolIO, ToolNanoVDB, ToolStats, ToolPoints, ToolGrid, ToolLevelSet, ToolMesh, ToolRender). Tool.h is now the class declaration only (~520 lines). Compiling main.cpp drops from ~228 s / 6.2 GB to ~9.5 s / 1.0 GB (gcc 13, -O3), and a parallel build of the tool no longer needs 6 GB per translation unit. No behaviour change.
