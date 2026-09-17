@@ -5,6 +5,32 @@
 /// @brief Rendering, slicing and movie output, plus the PNG/JPG/EXR image writers. Split out of Tool.h; see Tool.h for the class.
 
 #include "Tool.h"
+#include <openvdb/tools/Interpolation.h>
+#include <openvdb/tools/RayIntersector.h>
+#include <openvdb/tools/RayTracer.h>
+#include <openvdb/tools/Statistics.h>
+#include <tbb/blocked_range.h>
+#include <tbb/blocked_range2d.h>
+#include <tbb/parallel_for.h>
+#ifdef VDB_TOOL_USE_EXR
+#include <OpenEXR/ImfChannelList.h>
+#include <OpenEXR/ImfFrameBuffer.h>
+#include <OpenEXR/ImfHeader.h>
+#include <OpenEXR/ImfOutputFile.h>
+#include <OpenEXR/ImfPixelType.h>
+#endif
+#ifdef VDB_TOOL_USE_PNG
+#include <png.h>
+#endif
+#ifdef VDB_TOOL_USE_JPG
+#include <jpeglib.h>
+#endif
+#ifdef VDB_TOOL_USE_MPEG
+#include <cstdlib>// std::system
+#endif
+#ifndef VDB_TOOL_FFMPEG_PATH
+#define VDB_TOOL_FFMPEG_PATH "ffmpeg"
+#endif
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

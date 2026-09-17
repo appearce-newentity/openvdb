@@ -1,0 +1,4 @@
+vdb_tool:
+
+  Improvements:
+  - Tool.h now includes only what the Tool class declaration needs; each subsystem source includes the OpenVDB tools headers it uses. Three unused includes were removed. Compiling main.cpp drops further to ~5 s.

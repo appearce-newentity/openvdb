@@ -7,6 +7,17 @@
 ///        which makes this the most expensive file in vdb_tool to compile. Split out of Tool.h.
 
 #include "Tool.h"
+#ifdef VDB_TOOL_USE_NANO
+#include <nanovdb/NanoVDB.h>
+#include <nanovdb/io/IO.h>
+#include <nanovdb/tools/CreateNanoGrid.h>
+#include <nanovdb/tools/NanoToOpenVDB.h>
+#endif
+#if defined(_WIN32)
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

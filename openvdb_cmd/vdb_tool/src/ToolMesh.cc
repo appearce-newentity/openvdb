@@ -5,6 +5,12 @@
 /// @brief Mesh <-> volume conversion, shrink-wrap, mesh offsetting. Split out of Tool.h; see Tool.h for the class.
 
 #include "Tool.h"
+#include "ShrinkWrap.h"
+#include <openvdb/tools/Mask.h>// tools::interiorMask()
+#include <openvdb/tools/MeshToVolume.h>
+#include <openvdb/tools/VolumeToMesh.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE

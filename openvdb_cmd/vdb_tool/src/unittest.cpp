@@ -4,6 +4,16 @@
 #define _USE_MATH_DEFINES
 
 #include "Tool.h"
+#include "ShrinkWrap.h"
+#include <openvdb/io/File.h>
+#include <openvdb/tools/Composite.h>
+#include <openvdb/tools/Statistics.h>
+#include <openvdb/tools/ValueTransformer.h>
+#if defined(_WIN32)
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 #include "Parser.h"
 #include "Util.h"
 

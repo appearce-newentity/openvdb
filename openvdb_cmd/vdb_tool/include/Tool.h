@@ -27,95 +27,22 @@
 #ifndef VDB_TOOL_HAS_BEEN_INCLUDED
 #define VDB_TOOL_HAS_BEEN_INCLUDED
 
+// Only what the Tool class declaration itself needs. Each subsystem source file
+// (src/Tool*.cc) includes the OpenVDB tools headers it uses.
 #include <openvdb/openvdb.h>
-#include <openvdb/io/Stream.h>
 #include <openvdb/util/CpuTimer.h>
-#include <openvdb/util/Formats.h>
-#include <openvdb/util/Assert.h>
-#include <openvdb/tools/Composite.h>
-#include <openvdb/tools/Count.h>// for tools::minMax (used by -print level=2)
-#include <openvdb/tools/Diagnostics.h>
-#include <openvdb/tools/Statistics.h>
-#include <openvdb/tools/FastSweeping.h>
-#include <openvdb/tools/LevelSetAdvect.h>
-#include <openvdb/tools/LevelSetDilatedMesh.h>
-#include <openvdb/tools/LevelSetSphere.h>
-#include <openvdb/tools/LevelSetFilter.h>
-#include <openvdb/tools/LevelSetMeasure.h>
-#include <openvdb/tools/LevelSetMorph.h>
-#include <openvdb/tools/LevelSetPlatonic.h>
-#include <openvdb/tools/LevelSetRebuild.h>
-#include <openvdb/tools/LevelSetUtil.h>
-#include <openvdb/tools/RayIntersector.h>
-#include <openvdb/tools/RayTracer.h>
-#include <openvdb/tools/MeshToVolume.h>
-#include <openvdb/tools/ParticlesToLevelSet.h>
-#include <openvdb/tools/PointScatter.h>
-#include <openvdb/tools/PointsToMask.h>
-#include <openvdb/tools/VolumeToMesh.h>
-#include <openvdb/tools/GridOperators.h>
-#include <openvdb/tools/GridTransformer.h>
-#include <openvdb/tools/Prune.h>
-#include <openvdb/tools/Clip.h>
-#include <openvdb/tools/Mask.h> // for tools::interiorMask()
-#include <openvdb/tools/MultiResGrid.h>
-#include <openvdb/tools/SignedFloodFill.h>
-#include <openvdb/tools/PointIndexGrid.h>
-#include <openvdb/points/PointConversion.h>
-#include <openvdb/points/PointCount.h>
+#include <openvdb/tools/LevelSetFilter.h>// FilterT
+#include <openvdb/tools/VolumeToMesh.h>// mesherToGeometry()
 
-#ifdef VDB_TOOL_USE_NANO
-#include <nanovdb/NanoVDB.h>
-#include <nanovdb/io/IO.h>
-#include <nanovdb/tools/CreateNanoGrid.h>
-#include <nanovdb/tools/NanoToOpenVDB.h>
-#endif
-
-#ifdef VDB_TOOL_USE_EXR
-#include <OpenEXR/ImfChannelList.h>
-#include <OpenEXR/ImfFrameBuffer.h>
-#include <OpenEXR/ImfHeader.h>
-#include <OpenEXR/ImfOutputFile.h>
-#include <OpenEXR/ImfPixelType.h>
-#endif
-
-#ifdef VDB_TOOL_USE_PNG
-#include <png.h>
-#endif
-
-#ifdef VDB_TOOL_USE_PDAL
-#include <pdal/pdal.hpp>
-#endif
-
-#ifdef VDB_TOOL_USE_JPG
-#include <jpeglib.h>
-#endif
-
-#ifdef VDB_TOOL_USE_AX
-#include <openvdb_ax/ax.h>// for openvdb::ax::run (the -ax action)
-#endif
-
-#include <tbb/blocked_range2d.h>
-#include <tbb/enumerable_thread_specific.h>
-
-#include "Calculator.h"
 #include "Parser.h"
 #include "Geometry.h"
-#include "ShrinkWrap.h"
 
-#if defined(_WIN32)
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
-#ifdef VDB_TOOL_USE_MPEG
-#include <cstdlib>// for std::system
-#endif
-
-#ifndef VDB_TOOL_FFMPEG_PATH
-#define VDB_TOOL_FFMPEG_PATH "ffmpeg"
-#endif
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE
