@@ -24,8 +24,10 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${OPENVDB_CMAKE_PATH})
 
-# Pseudo library to manage dependencies
-add_library(vdb_tool_common INTERFACE)
+# Compiled library holding the vdb_tool implementation and its dependency configuration
+add_library(vdb_tool_common STATIC src/Geometry.cc src/Parser.cc)
+find_package(Threads REQUIRED)
+target_link_libraries(vdb_tool_common PUBLIC Threads::Threads)
 
 # Optional components
 option(OPENVDB_BUILD_VDB_TOOL_UNITTESTS "Build unit tests" OFF)
@@ -57,18 +59,18 @@ if(OPENVDB_TOOL_USE_ALL)
 endif()
 
 if(OPENVDB_TOOL_USE_NANO)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_NANO")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_NANO")
   if(OPENVDB_TOOL_NANO_USE_ZIP)
-    target_compile_definitions(vdb_tool_common INTERFACE "NANOVDB_USE_ZIP")
+    target_compile_definitions(vdb_tool_common PUBLIC "NANOVDB_USE_ZIP")
     find_package(ZLIB ${MINIMUM_ZLIB_VERSION} REQUIRED)
-    target_link_libraries(vdb_tool_common INTERFACE ZLIB::ZLIB)
+    target_link_libraries(vdb_tool_common PUBLIC ZLIB::ZLIB)
   endif()
   if(OPENVDB_TOOL_NANO_USE_BLOSC)
-    target_compile_definitions(vdb_tool_common INTERFACE "NANOVDB_USE_BLOSC")
+    target_compile_definitions(vdb_tool_common PUBLIC "NANOVDB_USE_BLOSC")
     find_package(Blosc ${MINIMUM_BLOSC_VERSION} REQUIRED)
-    target_link_libraries(vdb_tool_common INTERFACE blosc)
+    target_link_libraries(vdb_tool_common PUBLIC blosc)
   endif()
-  #target_include_directories(vdb_tool_common INTERFACE ${PROJECT_SOURCE_DIR}/../nanovdb/)
+  #target_include_directories(vdb_tool_common PUBLIC ${PROJECT_SOURCE_DIR}/../nanovdb/)
   if(NOT OPENVDB_BUILD_NANOVDB)
     find_package(OpenVDB COMPONENTS nanovdb)
     if(NOT OpenVDB_nanovdb_FOUND OR NOT OpenVDB_FOUND)
@@ -78,81 +80,82 @@ if(OPENVDB_TOOL_USE_NANO)
         " or please pass -DUSE_NANOVDB=ON as a cmake argument.")
     endif()
     set(NANOVDB_LIB OpenVDB::nanovdb)
-    target_include_directories(vdb_tool_common INTERFACE ${OPENVDB_nanovdb_INCLUDE_DIR})
+    target_include_directories(vdb_tool_common PUBLIC ${OPENVDB_nanovdb_INCLUDE_DIR})
   else()
     set(NANOVDB_LIB nanovdb)
   endif()
-  target_link_libraries(vdb_tool_common INTERFACE ${NANOVDB_LIB})
+  target_link_libraries(vdb_tool_common PUBLIC ${NANOVDB_LIB})
 endif()
 
 if(OPENVDB_TOOL_USE_PNG)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_PNG")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_PNG")
   if(WIN32)
     find_package(libpng CONFIG REQUIRED)
   else()
     find_package(PNG REQUIRED)
   endif()
-  target_link_libraries(vdb_tool_common INTERFACE png)
+  target_link_libraries(vdb_tool_common PUBLIC png)
 endif()
 
 if(OPENVDB_TOOL_USE_PDAL)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_PDAL")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_PDAL")
   if(WIN32)
     find_package(libdpal CONFIG REQUIRED)
   else()
     find_package(PDAL REQUIRED)
   endif()
   message(STATUS "PDAL: ${PDAL_LIBRARIES} ${PDAL_INCLUDE_DIRS}")
-  target_link_libraries(vdb_tool_common INTERFACE ${PDAL_LIBRARIES})
-  target_include_directories(vdb_tool_common INTERFACE ${PDAL_INCLUDE_DIRS})
+  target_link_libraries(vdb_tool_common PUBLIC ${PDAL_LIBRARIES})
+  target_include_directories(vdb_tool_common PUBLIC ${PDAL_INCLUDE_DIRS})
 endif()
 
 if(OPENVDB_TOOL_USE_JPG)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_JPG")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_JPG")
   find_package(JPEG REQUIRED)
-  target_link_libraries(vdb_tool_common INTERFACE ${JPEG_LIBRARIES})
-  target_include_directories(vdb_tool_common INTERFACE ${JPEG_INCLUDE_DIR})
+  target_link_libraries(vdb_tool_common PUBLIC ${JPEG_LIBRARIES})
+  target_include_directories(vdb_tool_common PUBLIC ${JPEG_INCLUDE_DIR})
 endif()
 
 if(OPENVDB_TOOL_USE_MPEG)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_MPEG")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_MPEG")
   find_program(FFMPEG_PATH NAMES ffmpeg REQUIRED)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_FFMPEG_PATH=\"${FFMPEG_PATH}\"")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_FFMPEG_PATH=\"${FFMPEG_PATH}\"")
 endif()
 
 if(OPENVDB_TOOL_USE_EXR)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_EXR")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_EXR")
   find_package(OpenEXR ${MINIMUM_OPENEXR_VERSION} REQUIRED)
   find_package(Imath ${MINIMUM_IMATH_VERSION} CONFIG REQUIRED)
 
   if(TARGET OpenEXR::OpenEXR)
-    target_link_libraries(vdb_tool_common INTERFACE OpenEXR::OpenEXR Imath::Imath)
+    target_link_libraries(vdb_tool_common PUBLIC OpenEXR::OpenEXR Imath::Imath)
   else()
-    target_link_libraries(vdb_tool_common INTERFACE OpenEXR::IlmImf Imath::Imath)
+    target_link_libraries(vdb_tool_common PUBLIC OpenEXR::IlmImf Imath::Imath)
   endif()
 endif()
 
 if(OPENVDB_TOOL_USE_ABC)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_ABC")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_ABC")
   find_package(Alembic CONFIG REQUIRED)
-  target_link_libraries(vdb_tool_common INTERFACE Alembic::Alembic)
+  target_link_libraries(vdb_tool_common PUBLIC Alembic::Alembic)
 endif()
 
 if(OPENVDB_TOOL_USE_USD)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_USD")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_USD")
   # OpenUSD exports its CMake config under the "pxr" package name.
   find_package(pxr CONFIG REQUIRED)
   # Minimum set of OpenUSD libraries needed to traverse a stage and pull
   # UsdGeomMesh data; pxr will transitively pull the rest.
-  target_link_libraries(vdb_tool_common INTERFACE usd usdGeom sdf gf vt tf)
+  target_link_libraries(vdb_tool_common PUBLIC usd usdGeom sdf gf vt tf)
 endif()
 
 if(OPENVDB_TOOL_USE_GLTF)
   # tinygltf is a single-header BSD-3 reader for .gltf / .glb. Fetched at
-  # configure time so no system install is required. Used in header-only
-  # mode via TINYGLTF_HEADER_ONLY (set in Geometry.h), so every TU including
-  # the header gets inline definitions — no separate impl source file needed.
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_GLTF")
+  # configure time so no system install is required. TINYGLTF_HEADER_ONLY
+  # below is tinygltf's own CMake option and only stops it from building a
+  # library target. The implementation is compiled exactly once, in
+  # src/Geometry.cc (which defines TINYGLTF_IMPLEMENTATION); no other TU may.
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_GLTF")
   include(FetchContent)
   FetchContent_Declare(tinygltf
     GIT_REPOSITORY https://github.com/syoyo/tinygltf.git
@@ -166,11 +169,11 @@ if(OPENVDB_TOOL_USE_GLTF)
   set(TINYGLTF_BUILD_BUILDER_EXAMPLE   OFF CACHE BOOL "" FORCE)
   set(TINYGLTF_HEADER_ONLY             ON  CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(tinygltf)
-  target_include_directories(vdb_tool_common INTERFACE ${tinygltf_SOURCE_DIR})
+  target_include_directories(vdb_tool_common PUBLIC ${tinygltf_SOURCE_DIR})
 endif()
 
 if(OPENVDB_TOOL_USE_AX)
-  target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_AX")
+  target_compile_definitions(vdb_tool_common PUBLIC "VDB_TOOL_USE_AX")
   # Resolve the AX library the same way the vdb_ax CLI does: use the in-tree
   # target when AX is built alongside (OPENVDB_BUILD_AX), otherwise the
   # installed OpenVDB::openvdb_ax component (which transitively pulls LLVM).
@@ -180,7 +183,7 @@ if(OPENVDB_TOOL_USE_AX)
     find_package(OpenVDB REQUIRED COMPONENTS openvdb_ax)
     set(OPENVDBAX_LIB OpenVDB::openvdb_ax)
   endif()
-  target_link_libraries(vdb_tool_common INTERFACE ${OPENVDBAX_LIB})
+  target_link_libraries(vdb_tool_common PUBLIC ${OPENVDBAX_LIB})
 endif()
 
 if(WIN32 AND (OPENVDB_TOOL_USE_ALL OR (OPENVDB_TOOL_USE_ABC AND OPENVDB_TOOL_USE_EXR)))
@@ -193,44 +196,44 @@ endif()
 
 # GCC flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(vdb_tool_common INTERFACE -Wno-invalid-offsetof -pthread -lpthread)
-  target_compile_options(vdb_tool_common INTERFACE "$<$<CONFIG:DEBUG>:-O1>")
+  target_compile_options(vdb_tool_common PUBLIC -Wno-invalid-offsetof)
+  target_compile_options(vdb_tool_common PUBLIC "$<$<CONFIG:DEBUG>:-O1>")
 endif()
 
 
 # MSVC flags
 # Increase the number of sections that an object file can contain
-target_compile_options(vdb_tool_common INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/bigobj>")
+target_compile_options(vdb_tool_common PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/bigobj>")
 # Excludes APIs such as Cryptography, DDE, RPC, Shell, and Windows Sockets
-target_compile_definitions(vdb_tool_common INTERFACE "$<$<CXX_COMPILER_ID:MSVC>:WIN32_LEAN_AND_MEAN>")
+target_compile_definitions(vdb_tool_common PUBLIC "$<$<CXX_COMPILER_ID:MSVC>:WIN32_LEAN_AND_MEAN>")
 # Disable non-secure CRT library function warnings
 # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/
 #     compiler-warning-level-3-c4996?view=vs-2019#unsafe-crt-library-functions
-target_compile_definitions(vdb_tool_common INTERFACE "$<$<CXX_COMPILER_ID:MSVC>:_CRT_SECURE_NO_WARNINGS>")
+target_compile_definitions(vdb_tool_common PUBLIC "$<$<CXX_COMPILER_ID:MSVC>:_CRT_SECURE_NO_WARNINGS>")
 # Disable POSIX function name warnings
 # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/
 #     compiler-warning-level-3-c4996?view=vs-2019#posix-function-names
-target_compile_definitions(vdb_tool_common INTERFACE "$<$<CXX_COMPILER_ID:MSVC>:_CRT_NONSTDC_NO_WARNINGS>")
+target_compile_definitions(vdb_tool_common PUBLIC "$<$<CXX_COMPILER_ID:MSVC>:_CRT_NONSTDC_NO_WARNINGS>")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  target_compile_options(vdb_tool_common INTERFACE "$<$<CONFIG:RELEASE>:/Oi>")
+  target_compile_options(vdb_tool_common PUBLIC "$<$<CONFIG:RELEASE>:/Oi>")
 
   message(STATUS "Suppressing some noisy MSVC CXX warnings.")
 endif()
 # Conversion from int64_t to long
-target_compile_options(vdb_tool_common INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4244>")
+target_compile_options(vdb_tool_common PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4244>")
 # It's not possible to use STL types in DLL interfaces in a portable and
 # reliable way so disable this warning
-target_compile_options(vdb_tool_common INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4251>")
+target_compile_options(vdb_tool_common PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4251>")
 # Conversion from size_t to uLong
-target_compile_options(vdb_tool_common INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4267>")
+target_compile_options(vdb_tool_common PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4267>")
 # Non dll-interface class used as base for dll-interface class
-#target_compile_options(vdb_tool_common INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4275>")
+#target_compile_options(vdb_tool_common PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4275>")
 # Truncation from 'int' to 'bool'
-#target_compile_options(vdb_tool_common INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4305>")
+#target_compile_options(vdb_tool_common PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/wd4305>")
 
 if(OPENVDB_BUILD_CORE)
-    target_link_libraries(vdb_tool_common INTERFACE ${OPENVDB_BINARIES_DEPENDENT_LIBS})
+    target_link_libraries(vdb_tool_common PUBLIC ${OPENVDB_BINARIES_DEPENDENT_LIBS})
 else()
     find_package(OpenVDB)
     if(NOT OpenVDB_FOUND)
@@ -238,14 +241,13 @@ else()
         " Couldn't find OpenVDB\n"
         " Set OPENVDB_CMAKE_PATH to <OpenVDB install path>/lib/cmake/OpenVDB")
     endif()
-    target_link_libraries(vdb_tool_common INTERFACE TBB::tbb OpenVDB::openvdb)
+    target_link_libraries(vdb_tool_common PUBLIC TBB::tbb OpenVDB::openvdb)
 endif()
 
-target_include_directories(vdb_tool_common INTERFACE "${Boost_INCLUDE_DIRS}" "${OpenVDB_INCLUDE_DIRS}" "include")
+target_include_directories(vdb_tool_common PUBLIC "${Boost_INCLUDE_DIRS}" "${OpenVDB_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # vdb_tool
 add_executable(vdb_tool src/main.cpp)
-target_include_directories(vdb_tool PRIVATE vdb_tool_common)
 target_link_libraries(vdb_tool PRIVATE vdb_tool_common)
 install(TARGETS vdb_tool RUNTIME DESTINATION ${OPENVDB_INSTALL_BINDIR})
 
@@ -255,7 +257,6 @@ if(OPENVDB_BUILD_VDB_TOOL_UNITTESTS)
   find_package(GTest ${MINIMUM_GOOGLETEST_VERSION} CONFIG REQUIRED)
 
   add_executable(vdb_tool_test src/unittest.cpp)
-  target_include_directories(vdb_tool_test PRIVATE vdb_tool_common)
   # The test provides its own main() and uses only gtest (no gmock), so link just
   # GTest::gtest. Listing gmock / *_main as well pulls gtest/gmock onto the link
   # line multiple times, which the macOS linker flags as "ignoring duplicate libraries".

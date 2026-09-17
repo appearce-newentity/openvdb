@@ -579,7 +579,7 @@ cmake -DOPENVDB_TOOL_USE_GLTF=ON ..
 ```
 (or pass `-DOPENVDB_TOOL_USE_ALL=ON` to enable every optional component, including glTF). The first configure downloads tinygltf into `<build>/_deps/tinygltf-src/`; subsequent configures reuse the cached checkout.
 
-vdb_tool uses tinygltf in header-only mode (`TINYGLTF_HEADER_ONLY`), with image decoding disabled (`TINYGLTF_NO_STB_IMAGE` / `TINYGLTF_NO_STB_IMAGE_WRITE`) since vdb_tool only consumes mesh geometry &mdash; textures referenced by the glTF are silently skipped.
+vdb_tool compiles the tinygltf implementation exactly once, in `src/Geometry.cc` (`TINYGLTF_IMPLEMENTATION`; tinygltf's own library target is disabled through its `TINYGLTF_HEADER_ONLY` CMake option), with image decoding disabled (`TINYGLTF_NO_STB_IMAGE` / `TINYGLTF_NO_STB_IMAGE_WRITE`) since vdb_tool only consumes mesh geometry &mdash; textures referenced by the glTF are silently skipped.
 
 ### What's imported
 - Vertex positions (POSITION attribute) and indices (UBYTE / USHORT / UINT) from every mesh primitive.
